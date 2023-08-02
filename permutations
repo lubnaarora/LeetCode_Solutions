@@ -1,0 +1,96 @@
+Algorithm:
+1. Initialize Variable
+	-> Store the length of input array in variable n
+	-> create an index array of size of input array , this will keep the track of current index of each element during permutation generation
+	-> create empty list (result) to include the final permutation
+	-> empty hash_set to ensure no duplicates are added to result list
+	
+2. Generate Initial Permutation
+	-> Add the initial state of the array nums to the result_set as a tuple. This will be the starting position of permutation generation
+	
+3. Main Loop
+	-> Start a loop which will continue untill all the permutations are generated.
+	-> use index varible i
+	
+4. Generate Next Permutation
+	-> check if the current value in index[i] is less than i.
+	-> if condition is true, it means there is a new permutation to generate.
+		-> if i is even , swap the elements at position 0 and i in nums
+		-> if i is odd , swap the element at position c[i] and i in nums.
+	-> After swapping , add the current state of nums to tuple result_set.
+	
+5. Incremenent or Reset Index
+	-> Incremenet the value at index[i].
+	-> if i has reached at the end of the array , reset it to 0. and increment the value at index[i].
+	-> Move to the next step and repeat the procedure
+	
+6. Finish Loop
+	-> Loop ends after all the permutations have been generated
+7. Convert Tuples to List
+	->
+8. Return Result
+
+-> Why tuple ? Can we use anything else
+-> Why odd and even 
+	n Heap's Algorithm, the parity of i is essential in determining which elements to swap during the permutation generation process. 
+-> WHy -> Incremenet the value at index[i].
+class Solution:
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        def swap(arr,i,j):
+            arr[i],arr[j] = arr[j],arr[i]
+
+        n = len(nums)
+        index = [0] * n
+        result = []
+        result_set = set()
+
+        #Adding the inital state to hash_set
+        result_set.add(tuple(nums))
+
+        i=0
+        while i < n:
+            if index[i] < i:
+                if i%2 == 0:
+                    swap(nums,0,i)
+                else:
+                    swap(nums,index[i],i)
+
+                #use tuple to add the permutation to the set
+                result_set.add(tuple(nums))
+
+                index[i] += 1
+                i = 0
+            else:
+                index[i] = 0
+                i += 1
+
+        #Converting the tuples back to list and adding them to result line
+        for perm_tuple in result_set:
+            result.append(list(perm_tuple))
+
+        return result
+		
+		
+		
+
+ backtracking algorithm with Lexicographic Order strategy
+ class Solution:
+    def permute(self, nums: List[int]) -> List[List[int]]:
+        def backtrack(start):
+
+            if start == len(nums):
+                result.append(nums[:])
+                return 
+
+            for i in range(start , len(nums)):
+                nums[start],nums[i] = nums[i],nums[start]
+
+                backtrack(start+1)
+
+                nums[start],nums[i] = nums[i],nums[start]
+
+        result = []
+        backtrack(0)
+        return result
+		
+The Lexicographic Order strategy ensures that permutations are generated in lexicographically increasing order. Starting with the sorted array, the algorithm generates the next permutation by swapping the rightmost two elements in a specific pattern. This process systematically explores all possible permutations in lexicographic order, ensuring that no duplicates are generated and all arrangements of the elements are covered
