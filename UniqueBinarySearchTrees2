@@ -1,0 +1,139 @@
+Unique Binary Search Trees II
+
+Given an integer n, return all the structurally unique BST's (binary search trees), which has exactly n nodes of unique values from 1 to n. Return the answer in any order.
+
+
+
+Example 1:
+ 
+
+
+
+
+
+Input: n = 3
+Output: [[1,null,2,null,3],[1,null,3,2],[2,1,3],[3,1,null,null,2],[3,2,null,1]]
+Example 2:
+Input: n = 1
+Output: [[1]]
+ 
+Constraints:
+1 <= n <= 8
+
+
+Algorithm:
+Absolutely, let's break down the process of generating unique Binary Search Trees (BSTs) into simpler steps:
+
+**Step 1: Understanding the Setup**
+Imagine you have a collection of boxes, and you want to build unique arrangements of these boxes, forming a special kind of tree structure called a Binary Search Tree (BST). Each box has a number from 1 to `n` written on it.
+
+**Step 2: Building the Trees**
+1. Start with a box that has a number 1 on it. This will be the root of the tree.
+2. Now, for each number from 2 to `n`, we will do the following:
+   a. Place the box with that number as a new node in the tree.
+   b. Create different arrangements of boxes on the left and right sides of this new box, while still following the rules of a BST. For example, smaller numbers go on the left, and larger numbers go on the right.
+3. Repeat step 2 for all numbers from 2 to `n`.
+
+**Step 3: Recursive Approach**
+- As you're building these arrangements, you can notice that the process repeats itself. You're essentially building smaller arrangements inside larger ones.
+- So, you can think of each step as a smaller version of the whole process. This is like solving a puzzle – you solve small parts, and then combine them to solve the entire puzzle.
+
+**Step 4: Collecting the Results**
+- Keep track of all the different arrangements you've created in a list. Each arrangement is a unique BST.
+- At the end, you will have a list containing all these different unique BSTs.
+
+**Step 5: Printing the Trees**
+- To see what these trees look like, you can print them. One way to print is to start from the top (the root) and move down, following the branches. This is called a "pre-order" traversal.
+- You'll visit each box one by one and write down the numbers on them.
+
+**Step 6: Putting It All Together**
+1. Create a special method (function) that can do all these steps. Let's call it `generateTrees`.
+2. When you use this method and provide the number `n`, it will follow all these steps and give you a list of different BSTs with numbers from 1 to `n`.
+
+**In a Nutshell:**
+
+Think of it like arranging a set of numbered boxes in a specific way to create different tree shapes. You follow a set of rules for placing the boxes, and by doing that, you get a bunch of unique tree arrangements. Then, you can print these trees to see how they look.
+
+This whole process helps you explore different patterns and structures that these trees can form based on the numbers you have.
+
+
+
+
+Code :
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def generateTrees(self, n: int) -> List[Optional[TreeNode]]:
+        def generate_trees(start,end):
+            if start > end :
+                return [None]
+
+            all_trees = []
+            for i in range(start,end+1):
+                left_subtrees = generate_trees(start,i-1)
+                right_subtrees = generate_trees(i+1,end)
+
+                for left_subtree in left_subtrees:
+                    for right_subtree in right_subtrees:
+                        root = TreeNode(i)
+                        root.left = left_subtree
+                        root.right = right_subtree
+                        all_trees.append(root)
+
+            return all_trees
+        return generate_trees(1,n) 
+
+
+
+Recursion takes a lot of time , so we will try to solve it using DP
+DP will avoid the recomputing the same subproblem repeatedly and store them in the result which can be re-used later.
+
+
+
+
+# Definition for a binary tree node.
+# class TreeNode:
+#     def __init__(self, val=0, left=None, right=None):
+#         self.val = val
+#         self.left = left
+#         self.right = right
+class Solution:
+    def generateTrees(self, n: int) -> List[Optional[TreeNode]]:
+
+        #dp will be used to store the results for different range of numbers
+        dp = [[None] * (n+1) for _ in range(n+1)]
+
+        def generate_trees(start,end):
+            if start > end:
+                return [None]
+
+            #if the result is already computed, return it directly
+            if dp[start][end]:
+                return dp[start][end]
+
+            all_trees=[]
+            for i in range(start,end+1):
+                left_subtrees = generate_trees(start,i-1)
+                right_subtrees = generate_trees(i+1,end)
+
+                for left_subtree in left_subtrees:
+                    for right_subtree in right_subtrees:
+                        root = TreeNode(i)
+                        root.left = left_subtree
+                        root.right = right_subtree
+                        all_trees.append(root)
+
+            dp[start][end] = all_trees
+            return all_trees
+
+        return generate_trees(1,n)
+
+
+
+
+
+
